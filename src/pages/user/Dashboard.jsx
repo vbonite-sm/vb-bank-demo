@@ -99,11 +99,13 @@ const Dashboard = () => {
     );
   }
 
+  const isNewUser = !recentTransactions.length && accountDetails.balance === 0;
+
   return (
     <div className="dashboard">
       <div className="dashboard-header">
-        <h1>Welcome back, {session?.fullName}</h1>
-        <p className="text-muted">Here's your financial overview</p>
+        <h1>{isNewUser ? 'Welcome' : 'Welcome back'}, {session?.fullName}</h1>
+        <p className="text-muted">{isNewUser ? 'Get started with your new account' : "Here's your financial overview"}</p>
       </div>
 
       {/* Account Balance Card */}

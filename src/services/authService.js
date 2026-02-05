@@ -80,6 +80,7 @@ export const register = (userData) => {
     accountNumber: accountNumber,
     balance: 0, // Start with zero balance
     currency: 'USD',
+    crypto: { BTC: 0, ETH: 0 },
     createdAt: new Date().toISOString()
   };
 

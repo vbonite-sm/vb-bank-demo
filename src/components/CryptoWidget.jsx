@@ -31,11 +31,12 @@ const CryptoWidget = () => {
       const users = getUsers();
       const user = users.find(u => u.id === session.userId);
 
-      if (!user || !user.crypto) {
-        throw new Error('User crypto data not found');
+      if (!user) {
+        throw new Error('User not found');
       }
 
-      const portfolioData = await calculatePortfolioValue(user.crypto);
+      const holdings = user.crypto || { BTC: 0, ETH: 0 };
+      const portfolioData = await calculatePortfolioValue(holdings);
       setPortfolio(portfolioData);
       setError(null);
     } catch (err) {
