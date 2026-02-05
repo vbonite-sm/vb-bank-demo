@@ -8,6 +8,12 @@ A premium mock banking application built with React and Vite for automation test
 - **Account Dashboard**: View balance, account details, and recent transactions
 - **Money Transfer**: Send money to other VB Bank users with recipient search
 - **Transaction History**: View all transactions with filters and export to CSV
+- **Top Up**: Add funds via a mock payment gateway with quick-select amounts
+- **Bill Pay**: Pay utility bills (Electric, Water, Internet, Gas, Phone, Streaming)
+- **Loan Application**: Apply for personal, auto, home, or education loans
+- **Virtual Cards**: Manage virtual debit/credit cards with freeze/unfreeze
+- **Account Settings**: Update profile, change password, and manage preferences
+- **Crypto Portfolio**: Real-time Bitcoin & Ethereum portfolio tracking via CoinGecko API
 - **Live Currency Rates**: Real-time exchange rates from external API
 - **Responsive Design**: Premium UI with dark theme and glassmorphism effects
 
@@ -17,6 +23,11 @@ A premium mock banking application built with React and Vite for automation test
 - **Transaction Monitoring**: Track all system transactions
 - **Analytics Charts**: Visual representation of transaction trends
 
+### Mock Payment Gateway
+- **Secure Gateway Simulation**: Simulated payment flow with card input
+- **Test Card Support**: Pre-filled test card for easy testing
+- **Transaction Deduplication**: Guards against duplicate deposits
+
 ## Tech Stack
 
 - **React 18.3** - UI framework
@@ -25,6 +36,8 @@ A premium mock banking application built with React and Vite for automation test
 - **Framer Motion** - Smooth animations
 - **Recharts** - Data visualization
 - **React Icons** - Icon library
+- **date-fns** - Date formatting utilities
+- **uuid** - Unique ID generation
 - **Vanilla CSS** - Custom styling with CSS variables
 
 ## Getting Started
@@ -86,30 +99,35 @@ vb-bank/
 │   └── vb-logo.svg
 ├── src/
 │   ├── components/
-│   │   ├── Layout.jsx
-│   │   ├── Layout.css
-│   │   └── ProtectedRoute.jsx
+│   │   ├── Layout.jsx / Layout.css
+│   │   ├── ProtectedRoute.jsx
+│   │   ├── CryptoWidget.jsx / CryptoWidget.css
+│   │   ├── BuggyToggle.jsx / BuggyToggle.css
+│   ├── context/
+│   │   └── BuggyContext.jsx
 │   ├── pages/
+│   │   ├── Login.jsx / Register.jsx / Auth.css
 │   │   ├── admin/
-│   │   │   ├── AdminDashboard.jsx
-│   │   │   ├── AdminDashboard.css
-│   │   │   ├── UserManagement.jsx
-│   │   │   └── UserManagement.css
-│   │   ├── user/
-│   │   │   ├── Dashboard.jsx
-│   │   │   ├── Dashboard.css
-│   │   │   ├── Transfer.jsx
-│   │   │   ├── Transfer.css
-│   │   │   ├── History.jsx
-│   │   │   └── History.css
-│   │   ├── Login.jsx
-│   │   ├── Register.jsx
-│   │   └── Auth.css
+│   │   │   ├── AdminDashboard.jsx / AdminDashboard.css
+│   │   │   └── UserManagement.jsx / UserManagement.css
+│   │   ├── gateway/
+│   │   │   └── MockGateway.jsx / MockGateway.css
+│   │   └── user/
+│   │       ├── Dashboard.jsx / Dashboard.css
+│   │       ├── Transfer.jsx / Transfer.css
+│   │       ├── History.jsx / History.css
+│   │       ├── TopUp.jsx / TopUp.css
+│   │       ├── BillPay.jsx / BillPay.css
+│   │       ├── Cards.jsx / Cards.css
+│   │       ├── Loan.jsx / Loan.css
+│   │       └── Settings.jsx / Settings.css
 │   ├── services/
 │   │   ├── authService.js
 │   │   ├── bankService.js
 │   │   ├── adminService.js
-│   │   └── apiService.js
+│   │   ├── apiService.js
+│   │   ├── cryptoService.js
+│   │   └── paymentGatewayService.js
 │   ├── styles/
 │   │   ├── variables.css
 │   │   └── global.css
@@ -130,12 +148,22 @@ vb-bank/
 - Session management using localStorage
 - Protected routes with automatic redirects
 - Quick login buttons for testing
+- Smart greeting ("Welcome" for new users, "Welcome back" for returning users)
 
 ### Banking Operations
 - Transfer money between accounts
-- View transaction history
+- Top up account via mock payment gateway
+- Pay utility bills to various providers
+- Apply for loans (Personal, Auto, Home, Education)
+- Manage virtual debit/credit cards
+- View transaction history with filters and CSV export
 - Real-time balance updates
-- Transaction filtering and search
+
+### Crypto Portfolio
+- Real-time Bitcoin & Ethereum price tracking via CoinGecko API
+- Portfolio value calculation
+- Price caching (1-minute TTL)
+- Fallback prices on API failure
 
 ### Admin Features
 - System-wide statistics
@@ -144,10 +172,16 @@ vb-bank/
 - Data visualization with charts
 
 ### External API Integration
-- Live currency exchange rates
-- Caching mechanism (1-hour cache)
+- **Currency Rates**: Live exchange rates via ExchangeRate-API (1-hour cache)
+- **Crypto Prices**: Real-time BTC/ETH prices via CoinGecko API (1-minute cache)
 - Fallback to cached data on API failure
 - Support for popular currencies
+
+### Mock Payment Gateway
+- Simulated card payment flow
+- Test card auto-fill for easy testing
+- Transaction deduplication to prevent double charges
+- Success/failure redirect handling
 
 ### Data Persistence
 - All data stored in localStorage
@@ -165,8 +199,9 @@ localStorage.clear();
 location.reload();
 ```
 
-### Currency API
-The app uses the free [ExchangeRate-API](https://open.er-api.com/) for real-time currency rates. No API key required.
+### APIs Used
+- **Currency Rates**: [ExchangeRate-API](https://open.er-api.com/) — free, no API key required
+- **Crypto Prices**: [CoinGecko API](https://api.coingecko.com/) — free, no API key required
 
 ## Playwright Test Automation
 
@@ -191,6 +226,11 @@ This application is specifically designed for Playwright test automation practic
 - `nav-dashboard` - Dashboard navigation link
 - `nav-transfer` - Transfer navigation link
 - `nav-history` - History navigation link
+- `nav-top-up` - Top Up navigation link
+- `nav-bill-pay` - Bill Pay navigation link
+- `nav-cards` - Virtual Cards navigation link
+- `nav-loan` - Loan navigation link
+- `nav-settings` - Settings navigation link
 - `nav-admin-dashboard` - Admin dashboard link
 - `nav-admin-users` - User management link
 - `btn-logout` - Logout button
@@ -222,6 +262,32 @@ This application is specifically designed for Playwright test automation practic
 - `input-search` - Transaction search input
 - `btn-export-csv` - Export CSV button
 - `transaction-row-{index}` - Transaction table rows
+
+#### Top Up
+- `input-amount` - Top up amount input
+- `btn-quick-{amount}` - Quick select amount buttons (50, 100, 250, 500)
+- `btn-proceed` - Proceed to payment button
+- `current-balance` - Current balance display
+- `alert-error` / `alert-success` - Status messages
+
+#### Bill Pay
+- Provider and payment method selection
+- Account number and amount inputs
+- Payment confirmation flow
+
+#### Virtual Cards
+- Card management (create, freeze, unfreeze, delete)
+- Card details display
+
+#### Loan Application
+- Loan type selection (Personal, Auto, Home, Education)
+- Amount and term inputs
+- Application submission and tracking
+
+#### Settings
+- Profile update form
+- Password change form
+- Preference toggles
 
 #### Admin Dashboard
 - `stat-total-users` - Total users statistic
