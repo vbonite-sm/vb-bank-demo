@@ -15,6 +15,14 @@ import Register from './pages/Register';
 import Dashboard from './pages/user/Dashboard';
 import Transfer from './pages/user/Transfer';
 import History from './pages/user/History';
+import BillPay from './pages/user/BillPay';
+import Cards from './pages/user/Cards';
+import Loan from './pages/user/Loan';
+import Settings from './pages/user/Settings';
+import TopUp from './pages/user/TopUp';
+
+// Gateway Pages
+import MockGateway from './pages/gateway/MockGateway';
 
 // Admin Pages
 import AdminDashboard from './pages/admin/AdminDashboard';
@@ -84,6 +92,59 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/bill-pay"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <BillPay />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/cards"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <Cards />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/loans"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <Loan />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/settings"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <Settings />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/top-up"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <TopUp />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Gateway Routes (No Layout) */}
+        <Route path="/gateway" element={<MockGateway />} />
 
         {/* Admin Routes */}
         <Route

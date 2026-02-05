@@ -1,0 +1,116 @@
+.buggy-toggle-container {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: var(--z-fixed);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 1rem;
+}
+
+.buggy-toggle-btn {
+  width: 60px;
+  height: 60px;
+  border-radius: var(--radius-full);
+  border: none;
+  background: var(--gradient-primary);
+  color: var(--white);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-xl);
+  transition: all var(--transition-base);
+  position: relative;
+  overflow: hidden;
+}
+
+.buggy-toggle-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--gradient-secondary);
+  opacity: 0;
+  transition: opacity var(--transition-base);
+}
+
+.buggy-toggle-btn.active::before {
+  opacity: 1;
+}
+
+.buggy-toggle-btn svg {
+  position: relative;
+  z-index: 1;
+}
+
+.buggy-toggle-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-2xl), var(--shadow-glow);
+}
+
+.buggy-toggle-btn:active {
+  transform: translateY(0);
+}
+
+.buggy-toggle-btn.active {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    box-shadow: var(--shadow-xl), 0 0 0 0 rgba(245, 85, 108, 0.7);
+  }
+  50% {
+    box-shadow: var(--shadow-xl), 0 0 0 10px rgba(245, 85, 108, 0);
+  }
+}
+
+.buggy-indicator {
+  background: var(--bg-card);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-xl);
+  padding: 0.75rem 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--danger-color);
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-medium);
+  box-shadow: var(--shadow-lg);
+  white-space: nowrap;
+}
+
+.buggy-indicator-icon {
+  animation: shake 0.5s infinite;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-2px) rotate(-5deg); }
+  75% { transform: translateX(2px) rotate(5deg); }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .buggy-toggle-container {
+    bottom: 1rem;
+    right: 1rem;
+  }
+
+  .buggy-toggle-btn {
+    width: 50px;
+    height: 50px;
+  }
+
+  .buggy-toggle-btn svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .buggy-indicator {
+    font-size: var(--text-xs);
+    padding: 0.5rem 1rem;
+  }
+}

@@ -4,6 +4,7 @@ import { FiDollarSign, FiTrendingUp, FiTrendingDown, FiCreditCard, FiRefreshCw }
 import { getCurrentSession } from '../../services/authService';
 import { getAccountDetails, getUserTransactions, getTransactionStats } from '../../services/bankService';
 import { getPopularCurrencies, getCurrencySymbol } from '../../services/apiService';
+import CryptoWidget from '../../components/CryptoWidget';
 import './Dashboard.css';
 
 const Dashboard = () => {
@@ -178,12 +179,21 @@ const Dashboard = () => {
       </div>
 
       <div className="dashboard-grid">
+        {/* Crypto Portfolio Widget */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.4 }}
+        >
+          <CryptoWidget />
+        </motion.div>
+
         {/* Recent Transactions */}
         <motion.div
           className="transactions-card glass-card"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.4 }}
+          transition={{ duration: 0.5, delay: 0.5 }}
         >
           <div className="card-header">
             <h3>Recent Transactions</h3>
@@ -218,7 +228,7 @@ const Dashboard = () => {
           className="currency-card glass-card"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.5 }}
+          transition={{ duration: 0.5, delay: 0.6 }}
         >
           <div className="card-header">
             <h3>Live Currency Rates</h3>

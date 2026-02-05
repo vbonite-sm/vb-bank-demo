@@ -1,0 +1,452 @@
+.loan-page {
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.loan-layout {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.loan-wizard,
+.applications-list {
+  background: var(--bg-card);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-xl);
+  padding: 2rem;
+  backdrop-filter: blur(10px);
+}
+
+.applications-list h2,
+.wizard-content h2 {
+  font-size: var(--text-xl);
+  font-weight: var(--font-weight-semibold);
+  color: var(--white);
+  margin-bottom: 1.5rem;
+}
+
+/* Wizard Steps */
+.wizard-steps {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+  position: relative;
+}
+
+.wizard-steps::before {
+  content: '';
+  position: absolute;
+  top: 20px;
+  left: 40px;
+  right: 40px;
+  height: 2px;
+  background: var(--glass-border);
+  z-index: 0;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  position: relative;
+  z-index: 1;
+}
+
+.step-number {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  background: var(--bg-secondary);
+  border: 2px solid var(--glass-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: var(--font-weight-semibold);
+  color: var(--gray-400);
+  transition: all var(--transition-base);
+}
+
+.step.active .step-number {
+  background: var(--accent-color);
+  border-color: var(--accent-color);
+  color: var(--white);
+}
+
+.step.completed .step-number {
+  background: var(--secondary-color);
+  border-color: var(--secondary-color);
+  color: var(--white);
+}
+
+.step-label {
+  font-size: var(--text-sm);
+  color: var(--gray-400);
+  font-weight: var(--font-weight-medium);
+}
+
+.step.active .step-label {
+  color: var(--white);
+}
+
+/* Wizard Content */
+.wizard-content {
+  min-height: 400px;
+  margin-bottom: 2rem;
+}
+
+/* Loan Types */
+.loan-types {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.loan-type-card {
+  padding: 1.5rem;
+  background: var(--bg-secondary);
+  border: 2px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  display: block;
+}
+
+.loan-type-card:hover {
+  background: var(--bg-tertiary);
+  border-color: var(--accent-color);
+}
+
+.loan-type-card.selected {
+  border-color: var(--accent-color);
+  background: var(--bg-tertiary);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+.loan-type-card input[type="radio"] {
+  display: none;
+}
+
+.loan-type-content h3 {
+  font-size: var(--text-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--white);
+  margin-bottom: 0.5rem;
+}
+
+.loan-description {
+  font-size: var(--text-sm);
+  color: var(--gray-400);
+  margin-bottom: 1rem;
+}
+
+.loan-details {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.detail-label {
+  font-size: var(--text-xs);
+  color: var(--gray-500);
+}
+
+.detail-value {
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--white);
+}
+
+/* Loan Form */
+.loan-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-group label {
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--gray-300);
+}
+
+.form-group input {
+  padding: 0.75rem 1rem;
+  background: var(--bg-secondary);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  color: var(--white);
+  font-size: var(--text-base);
+  transition: all var(--transition-base);
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+.form-hint {
+  font-size: var(--text-xs);
+  color: var(--gray-500);
+}
+
+.calculation-preview {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: var(--gradient-primary);
+  border-radius: var(--radius-lg);
+  margin-top: 1rem;
+}
+
+.calculation-preview svg {
+  width: 32px;
+  height: 32px;
+  color: var(--white);
+}
+
+.preview-label {
+  font-size: var(--text-sm);
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 0.25rem;
+}
+
+.preview-value {
+  font-size: var(--text-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--white);
+}
+
+/* Review Summary */
+.review-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.summary-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-md);
+}
+
+.summary-item.highlight {
+  background: var(--gradient-primary);
+}
+
+.summary-label {
+  font-size: var(--text-sm);
+  color: var(--gray-400);
+}
+
+.summary-item.highlight .summary-label {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.summary-value {
+  font-size: var(--text-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--white);
+}
+
+/* Wizard Actions */
+.wizard-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.btn {
+  padding: 0.875rem 1.5rem;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: var(--text-base);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 1;
+  justify-content: center;
+}
+
+.btn-primary {
+  background: var(--gradient-primary);
+  color: var(--white);
+}
+
+.btn-secondary {
+  background: var(--bg-secondary);
+  color: var(--white);
+  border: 1px solid var(--glass-border);
+}
+
+.btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Applications */
+.applications {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.application-card {
+  padding: 1.5rem;
+  background: var(--bg-secondary);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+}
+
+.application-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.application-header h3 {
+  font-size: var(--text-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--white);
+  margin: 0;
+}
+
+.application-status {
+  font-size: var(--text-xs);
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-full);
+  font-weight: var(--font-weight-medium);
+  text-transform: capitalize;
+}
+
+.status-approved {
+  background: rgba(16, 185, 129, 0.2);
+  color: var(--secondary-color);
+}
+
+.status-pending {
+  background: rgba(245, 158, 11, 0.2);
+  color: var(--warning-color);
+}
+
+.status-rejected {
+  background: rgba(239, 68, 68, 0.2);
+  color: var(--danger-color);
+}
+
+.application-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.application-details .detail {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--text-sm);
+}
+
+.application-details .detail span {
+  color: var(--gray-400);
+}
+
+.application-details .detail strong {
+  color: var(--white);
+}
+
+.empty-state {
+  padding: 3rem 1rem;
+  text-align: center;
+  color: var(--gray-500);
+}
+
+.alert {
+  padding: 1rem 1.5rem;
+  border-radius: var(--radius-md);
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.alert svg {
+  width: 20px;
+  height: 20px;
+}
+
+.alert-error {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid var(--danger-color);
+  color: var(--danger-color);
+}
+
+.alert-success {
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid var(--secondary-color);
+  color: var(--secondary-color);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .loan-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .loan-details {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .loan-page {
+    padding: 1rem;
+  }
+
+  .loan-wizard,
+  .applications-list {
+    padding: 1.5rem;
+  }
+
+  .wizard-steps {
+    font-size: var(--text-xs);
+  }
+
+  .step-number {
+    width: 32px;
+    height: 32px;
+  }
+
+  .wizard-actions {
+    flex-direction: column-reverse;
+  }
+}

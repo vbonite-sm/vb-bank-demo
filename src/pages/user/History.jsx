@@ -11,6 +11,10 @@ const History = () => {
   const [filteredTransactions, setFilteredTransactions] = useState([]);
   const [filter, setFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+  const [minAmount, setMinAmount] = useState('');
+  const [maxAmount, setMaxAmount] = useState('');
 
   useEffect(() => {
     loadTransactions();
@@ -18,7 +22,7 @@ const History = () => {
 
   useEffect(() => {
     applyFilters();
-  }, [filter, searchTerm, transactions]);
+  }, [filter, searchTerm, startDate, endDate, minAmount, maxAmount, transactions]);
 
   const loadTransactions = () => {
     if (session) {
@@ -37,7 +41,7 @@ const History = () => {
         if (filter === 'income') {
           return txn.type === 'deposit' || txn.type === 'transfer_in';
         } else if (filter === 'expense') {
-          return txn.type === 'withdrawal' || txn.type === 'transfer_out' || txn.type === 'transfer';
+          return txn.type === 'withdrawal' || txn.type === 'transfer_out' || txn.type === 'transfer' || txn.type === 'bill_payment';
         }
         return true;
       });
@@ -50,7 +54,44 @@ const History = () => {
       );
     }
 
+    // Apply date range filter
+    if (startDate) {
+      const start = new Date(startDate);
+      start.setHours(0, 0, 0, 0);
+      filtered = filtered.filter(txn => new Date(txn.timestamp) >= start);
+    }
+
+    if (endDate) {
+      const end = new Date(endDate);
+      end.setHours(23, 59, 59, 999);
+      filtered = filtered.filter(txn => new Date(txn.timestamp) <= end);
+    }
+
+    // Apply amount range filter
+    if (minAmount) {
+      const min = parseFloat(minAmount);
+      if (!isNaN(min)) {
+        filtered = filtered.filter(txn => txn.amount >= min);
+      }
+    }
+
+    if (maxAmount) {
+      const max = parseFloat(maxAmount);
+      if (!isNaN(max)) {
+        filtered = filtered.filter(txn => txn.amount <= max);
+      }
+    }
+
     setFilteredTransactions(filtered);
+  };
+
+  const clearFilters = () => {
+    setFilter('all');
+    setSearchTerm('');
+    setStartDate('');
+    setEndDate('');
+    setMinAmount('');
+    setMaxAmount('');
   };
 
   const formatCurrency = (amount) => {
@@ -78,6 +119,7 @@ const History = () => {
       case 'withdrawal':
       case 'transfer_out':
       case 'transfer':
+      case 'bill_payment':
         return <FiTrendingDown className="transaction-icon negative" />;
       default:
         return <FiDollarSign className="transaction-icon" />;
@@ -90,7 +132,8 @@ const History = () => {
       'withdrawal': 'Withdrawal',
       'transfer': 'Transfer Out',
       'transfer_out': 'Transfer Out',
-      'transfer_in': 'Transfer In'
+      'transfer_in': 'Transfer In',
+      'bill_payment': 'Bill Payment'
     };
     return typeMap[type] || type;
   };
@@ -103,6 +146,7 @@ const History = () => {
       case 'withdrawal':
       case 'transfer_out':
       case 'transfer':
+      case 'bill_payment':
         return 'negative';
       default:
         return '';
@@ -198,6 +242,60 @@ const History = () => {
               data-testid="input-search"
             />
           </div>
+
+          <div className="filter-group">
+            <label className="filter-label">Date Range:</label>
+            <div className="date-range-inputs">
+              <input
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                className="input-field"
+                data-testid="input-start-date"
+              />
+              <span className="date-separator">to</span>
+              <input
+                type="date"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+                className="input-field"
+                data-testid="input-end-date"
+              />
+            </div>
+          </div>
+
+          <div className="filter-group">
+            <label className="filter-label">Amount Range:</label>
+            <div className="amount-range-inputs">
+              <input
+                type="number"
+                value={minAmount}
+                onChange={(e) => setMinAmount(e.target.value)}
+                className="input-field"
+                placeholder="Min"
+                step="0.01"
+                data-testid="input-min-amount"
+              />
+              <span className="amount-separator">to</span>
+              <input
+                type="number"
+                value={maxAmount}
+                onChange={(e) => setMaxAmount(e.target.value)}
+                className="input-field"
+                placeholder="Max"
+                step="0.01"
+                data-testid="input-max-amount"
+              />
+            </div>
+          </div>
+
+          <button
+            onClick={clearFilters}
+            className="btn btn-clear"
+            data-testid="btn-clear-filters"
+          >
+            Clear Filters
+          </button>
         </div>
       </motion.div>
 

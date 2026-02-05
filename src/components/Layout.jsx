@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { FiHome, FiSend, FiClock, FiUsers, FiBarChart2, FiLogOut, FiMenu, FiX } from 'react-icons/fi';
+import { FiHome, FiSend, FiClock, FiUsers, FiBarChart2, FiLogOut, FiMenu, FiX, FiCreditCard, FiDollarSign, FiFileText, FiSettings, FiPlusCircle } from 'react-icons/fi';
 import { getCurrentSession, logout } from '../services/authService';
+import BuggyToggle from './BuggyToggle';
 import './Layout.css';
 
 const Layout = ({ children }) => {
@@ -21,7 +22,12 @@ const Layout = ({ children }) => {
   const userNavItems = [
     { path: '/dashboard', icon: FiHome, label: 'Dashboard' },
     { path: '/transfer', icon: FiSend, label: 'Transfer' },
-    { path: '/history', icon: FiClock, label: 'History' }
+    { path: '/history', icon: FiClock, label: 'History' },
+    { path: '/bill-pay', icon: FiFileText, label: 'Bills Payment' },
+    { path: '/cards', icon: FiCreditCard, label: 'Cards' },
+    { path: '/loans', icon: FiDollarSign, label: 'Loans' },
+    { path: '/top-up', icon: FiPlusCircle, label: 'Top Up' },
+    { path: '/settings', icon: FiSettings, label: 'Settings' }
   ];
 
   const adminNavItems = [
@@ -113,6 +119,9 @@ const Layout = ({ children }) => {
             {children}
           </motion.div>
         </main>
+
+        {/* Buggy Toggle (only for users, not admins) */}
+        {!isAdmin && <BuggyToggle />}
       </div>
     </div>
   );

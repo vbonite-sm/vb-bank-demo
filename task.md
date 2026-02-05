@@ -1,29 +1,35 @@
-- [ ] Initialize Project
-  - [ ] Create Vite + React app
-  - [ ] Set up project structure (components, pages, styles)
-  - [ ] Configure global styles (variables, typography, reset)
-- [ ] Core Infrastructure
-  - [ ] Implement Mock Auth Service (localStorage)
-  - [ ] Implement Mock Banking Service (transactions, balance)
-  - [ ] Set up Routing (React Router)
-- [ ] Feature: Authentication & Roles
-  - [ ] Login Page (Role selection or auto-detect)
-  - [ ] Registration Page (User only)
-  - [ ] Role-Based Route Protection (Admin vs User)
-- [ ] Feature: User Dashboard
-  - [ ] Account Overview (Balance, Account Number)
-  - [ ] Recent Transactions List
-  - [ ] Money Transfer Form
-  - [ ] Real-time Currency Rates (via External API)
-- [ ] Feature: Admin Dashboard
-  - [ ] User Management (List users, View details)
-  - [ ] System Overview (Total deposits, active users)
-  - [ ] Transaction Monitoring
-- [ ] Data & Infrastructure
-  - [ ] Seed Dummy Data (Users, Admins, Transactions)
-  - [ ] Mock API / Service Layer improvements
-- [ ] Verification
-  - [ ] Manual walkthrough of all flows
-- [ ] Deployment
-  - [ ] Build for Production
-  - [ ] Deploy to Vercel/Netlify (Free hosting with custom subdomain)
+# VB Bank Tasks
+
+- [x] Brainstorm additional features
+- [x] Update Implementation Plan with new features
+    - [x] Add Bill Payments (Update for Card Flow)
+    - [x] Add Card Management
+    - [x] Add Loan Wizard
+    - [x] Add Transaction Filters
+    - [x] Add User Settings & PII
+    - [x] Add Buggy Mode
+    - [x] Add Sandbox Payment Gateway Integration
+    - [x] Add External Public APIs (Currency, Crypto, Users)
+    - [x] Define Mock Utility Providers (Power, Water, Internet)
+    - [x] Define Mock Cards, Loan Options, and Crypto Holdings
+- [ ] Phase 1: Core Setup & Styles
+    - [ ] Initialize Routes & Directories
+    - [ ] Implementation Design System (Variables, Global CSS)
+    - [ ] Create Layout & Navigation Components
+- [ ] Phase 2: Services & Logic
+    - [ ] Implement Auth Service (Session, Login/Register)
+    - [ ] Implement Bank Service (Balances, Transactions)
+    - [ ] Implement Buggy Context & Toggle
+    - [ ] Implement Mock Payment Gateway
+    - [ ] Integrate CoinGecko & RandomUser APIs
+- [ ] Phase 3: User Features
+    - [ ] Dashboard (Ticker, Crypto Widget)
+    - [ ] History (Filters, Search)
+    - [ ] Transfers & Top Up
+    - [ ] Bill Payments (Account & Card Flows)
+    - [ ] Card Management (Visuals, Toggle States)
+    - [ ] Loan Wizard
+    - [ ] Settings (PII Updates)
+- [ ] Phase 4: Admin & Verification
+    - [ ] Admin Dashboard & User Mgmt
+    - [ ] Manual Verification & Walkthrough

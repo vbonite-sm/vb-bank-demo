@@ -1,0 +1,240 @@
+.crypto-widget {
+  background: var(--bg-card);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-xl);
+  padding: 1.5rem;
+  backdrop-filter: blur(10px);
+}
+
+.crypto-widget-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.crypto-widget-header h3 {
+  font-size: var(--text-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--white);
+  margin: 0;
+}
+
+.refresh-btn {
+  background: transparent;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  padding: 0.5rem;
+  color: var(--gray-400);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-base);
+}
+
+.refresh-btn:hover:not(:disabled) {
+  background: var(--bg-card-hover);
+  color: var(--accent-color);
+  border-color: var(--accent-color);
+}
+
+.refresh-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.refresh-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+.spinning {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.crypto-widget-total {
+  text-align: center;
+  padding: 1.5rem;
+  background: var(--gradient-primary);
+  border-radius: var(--radius-lg);
+  margin-bottom: 1.5rem;
+}
+
+.total-label {
+  font-size: var(--text-sm);
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 0.5rem;
+}
+
+.total-value {
+  font-size: var(--text-3xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--white);
+}
+
+.crypto-assets {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.crypto-asset {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: var(--bg-secondary);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  transition: all var(--transition-base);
+  cursor: pointer;
+}
+
+.crypto-asset:hover {
+  background: var(--bg-tertiary);
+  border-color: var(--accent-color);
+  transform: translateY(-2px);
+}
+
+.asset-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.asset-icon.bitcoin {
+  background: linear-gradient(135deg, #f7931a 0%, #f2a900 100%);
+  color: var(--white);
+}
+
+.asset-icon.ethereum {
+  background: linear-gradient(135deg, #627eea 0%, #8a9ef4 100%);
+  color: var(--white);
+}
+
+.asset-details {
+  flex: 1;
+}
+
+.asset-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.asset-name {
+  font-size: var(--text-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--white);
+}
+
+.asset-symbol {
+  font-size: var(--text-xs);
+  color: var(--gray-400);
+  background: var(--bg-card);
+  padding: 0.125rem 0.5rem;
+  border-radius: var(--radius-sm);
+}
+
+.asset-holdings {
+  font-size: var(--text-sm);
+  color: var(--accent-light);
+  margin-bottom: 0.125rem;
+}
+
+.asset-price {
+  font-size: var(--text-xs);
+  color: var(--gray-500);
+}
+
+.asset-value {
+  font-size: var(--text-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--secondary-color);
+  text-align: right;
+}
+
+.crypto-widget-footer {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--glass-border);
+  text-align: center;
+}
+
+.last-updated {
+  font-size: var(--text-xs);
+  color: var(--gray-500);
+}
+
+.crypto-widget-loading,
+.crypto-widget-error {
+  padding: 2rem;
+  text-align: center;
+  color: var(--gray-400);
+}
+
+.crypto-widget-loading svg {
+  width: 32px;
+  height: 32px;
+  margin-bottom: 1rem;
+  color: var(--accent-color);
+}
+
+.crypto-widget-error button {
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  background: var(--accent-color);
+  color: var(--white);
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-base);
+}
+
+.crypto-widget-error button:hover {
+  background: var(--accent-light);
+  transform: translateY(-2px);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .crypto-widget {
+    padding: 1rem;
+  }
+
+  .crypto-widget-total {
+    padding: 1rem;
+  }
+
+  .total-value {
+    font-size: var(--text-2xl);
+  }
+
+  .crypto-asset {
+    flex-wrap: wrap;
+  }
+
+  .asset-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+  }
+
+  .asset-value {
+    width: 100%;
+    text-align: left;
+    margin-top: 0.5rem;
+  }
+}
