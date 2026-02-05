@@ -1,0 +1,246 @@
+.transfer-page {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.page-header {
+  margin-bottom: var(--spacing-xl);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.page-header h1 {
+  font-size: var(--text-3xl);
+  margin-bottom: var(--spacing-sm);
+}
+
+.balance-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-lg) var(--spacing-xl);
+  margin-bottom: var(--spacing-xl);
+  background: var(--gradient-primary);
+}
+
+.balance-label {
+  font-size: var(--text-sm);
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.balance-value {
+  font-size: var(--text-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--white);
+}
+
+.transfer-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-xl);
+}
+
+.transfer-form-card,
+.transfer-info-card {
+  padding: var(--spacing-2xl);
+}
+
+.transfer-form-card h3,
+.transfer-info-card h3 {
+  margin-bottom: var(--spacing-xl);
+}
+
+/* Alerts */
+.alert {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--spacing-lg);
+}
+
+.alert svg {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.alert-error {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid var(--danger-color);
+  color: var(--danger-color);
+}
+
+.alert-success {
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid var(--secondary-color);
+  color: var(--secondary-color);
+}
+
+.success-message {
+  font-size: var(--text-base);
+  font-weight: var(--font-weight-medium);
+  margin: 0 0 var(--spacing-xs) 0;
+}
+
+.success-balance {
+  font-size: var(--text-sm);
+  margin: 0;
+}
+
+/* Transfer Form */
+.transfer-form {
+  margin-top: var(--spacing-xl);
+}
+
+.textarea {
+  resize: vertical;
+  font-family: var(--font-primary);
+}
+
+/* Search Results */
+.search-results {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: var(--bg-secondary);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  margin-top: var(--spacing-sm);
+  max-height: 300px;
+  overflow-y: auto;
+  z-index: var(--z-dropdown);
+  box-shadow: var(--shadow-lg);
+}
+
+.search-result-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-md);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.search-result-item:hover {
+  background: var(--bg-card);
+}
+
+.search-result-item:not(:last-child) {
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.result-info {
+  flex: 1;
+}
+
+.result-name {
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--white);
+  margin: 0 0 2px 0;
+}
+
+.result-username {
+  font-size: var(--text-xs);
+  margin: 0;
+}
+
+.result-account {
+  font-size: var(--text-sm);
+  color: var(--accent-color);
+  font-weight: var(--font-weight-medium);
+}
+
+/* Transfer Info */
+.info-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-2xl);
+}
+
+.info-item {
+  display: flex;
+  gap: var(--spacing-md);
+}
+
+.info-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent-color);
+  flex-shrink: 0;
+}
+
+.info-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.info-content h4 {
+  font-size: var(--text-base);
+  margin: 0 0 var(--spacing-xs) 0;
+}
+
+.info-content p {
+  margin: 0;
+  font-size: var(--text-sm);
+}
+
+.important-note {
+  padding: var(--spacing-lg);
+  background: var(--bg-card);
+  border-left: 3px solid var(--warning-color);
+  border-radius: var(--radius-md);
+}
+
+.important-note p {
+  margin: 0 0 var(--spacing-sm) 0;
+  color: var(--warning-color);
+  font-weight: var(--font-weight-semibold);
+}
+
+.important-note ul {
+  margin: 0;
+  padding-left: var(--spacing-lg);
+  color: var(--gray-400);
+  font-size: var(--text-sm);
+}
+
+.important-note li {
+  margin-bottom: var(--spacing-xs);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .transfer-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .page-header {
+    flex-direction: column;
+    gap: var(--spacing-md);
+  }
+
+  .balance-info {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-sm);
+  }
+
+  .transfer-form-card,
+  .transfer-info-card {
+    padding: var(--spacing-lg);
+  }
+}

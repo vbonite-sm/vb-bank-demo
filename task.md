@@ -1,0 +1,29 @@
+- [ ] Initialize Project
+  - [ ] Create Vite + React app
+  - [ ] Set up project structure (components, pages, styles)
+  - [ ] Configure global styles (variables, typography, reset)
+- [ ] Core Infrastructure
+  - [ ] Implement Mock Auth Service (localStorage)
+  - [ ] Implement Mock Banking Service (transactions, balance)
+  - [ ] Set up Routing (React Router)
+- [ ] Feature: Authentication & Roles
+  - [ ] Login Page (Role selection or auto-detect)
+  - [ ] Registration Page (User only)
+  - [ ] Role-Based Route Protection (Admin vs User)
+- [ ] Feature: User Dashboard
+  - [ ] Account Overview (Balance, Account Number)
+  - [ ] Recent Transactions List
+  - [ ] Money Transfer Form
+  - [ ] Real-time Currency Rates (via External API)
+- [ ] Feature: Admin Dashboard
+  - [ ] User Management (List users, View details)
+  - [ ] System Overview (Total deposits, active users)
+  - [ ] Transaction Monitoring
+- [ ] Data & Infrastructure
+  - [ ] Seed Dummy Data (Users, Admins, Transactions)
+  - [ ] Mock API / Service Layer improvements
+- [ ] Verification
+  - [ ] Manual walkthrough of all flows
+- [ ] Deployment
+  - [ ] Build for Production
+  - [ ] Deploy to Vercel/Netlify (Free hosting with custom subdomain)

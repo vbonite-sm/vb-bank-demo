@@ -1,0 +1,346 @@
+.dashboard {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.dashboard-header {
+  margin-bottom: var(--spacing-2xl);
+}
+
+.dashboard-header h1 {
+  font-size: var(--text-4xl);
+  margin-bottom: var(--spacing-sm);
+}
+
+/* Balance Card */
+.balance-card {
+  padding: var(--spacing-2xl);
+  margin-bottom: var(--spacing-xl);
+  background: var(--gradient-primary);
+}
+
+.balance-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--spacing-xl);
+}
+
+.balance-label {
+  font-size: var(--text-sm);
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: var(--spacing-sm);
+  display: block;
+}
+
+.balance-amount {
+  font-size: var(--text-5xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--white);
+  margin: 0;
+}
+
+.balance-icon {
+  width: 60px;
+  height: 60px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius-xl);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-3xl);
+  color: var(--white);
+}
+
+.balance-footer {
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  padding-top: var(--spacing-lg);
+}
+
+.account-info {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.account-label {
+  font-size: var(--text-sm);
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.account-number {
+  font-size: var(--text-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--white);
+  letter-spacing: 1px;
+}
+
+/* Statistics Grid */
+.stats-grid {
+  margin-bottom: var(--spacing-2xl);
+}
+
+.stat-card {
+  padding: var(--spacing-xl);
+}
+
+.stat-header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-md);
+}
+
+.stat-icon {
+  width: 24px;
+  height: 24px;
+}
+
+.stat-icon.positive {
+  color: var(--secondary-color);
+}
+
+.stat-icon.negative {
+  color: var(--danger-color);
+}
+
+.stat-label {
+  font-size: var(--text-sm);
+  color: var(--gray-400);
+}
+
+.stat-value {
+  font-size: var(--text-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--white);
+  margin-bottom: var(--spacing-sm);
+}
+
+.stat-count {
+  font-size: var(--text-sm);
+}
+
+/* Dashboard Grid */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: var(--spacing-xl);
+}
+
+/* Transactions Card */
+.transactions-card {
+  padding: var(--spacing-xl);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-xl);
+}
+
+.card-header h3 {
+  margin: 0;
+  font-size: var(--text-xl);
+}
+
+.view-all-link {
+  color: var(--accent-color);
+  font-size: var(--text-sm);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.view-all-link:hover {
+  color: var(--accent-light);
+  text-decoration: underline;
+}
+
+.transactions-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.transaction-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md);
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  transition: background var(--transition-fast);
+}
+
+.transaction-item:hover {
+  background: var(--bg-card-hover);
+}
+
+.transaction-icon {
+  width: 40px;
+  height: 40px;
+  padding: var(--spacing-sm);
+  border-radius: var(--radius-md);
+  background: var(--bg-secondary);
+  flex-shrink: 0;
+}
+
+.transaction-icon.positive {
+  color: var(--secondary-color);
+  background: rgba(16, 185, 129, 0.1);
+}
+
+.transaction-icon.negative {
+  color: var(--danger-color);
+  background: rgba(239, 68, 68, 0.1);
+}
+
+.transaction-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.transaction-description {
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--white);
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.transaction-date {
+  font-size: var(--text-xs);
+  margin: 0;
+}
+
+.transaction-amount {
+  font-size: var(--text-base);
+  font-weight: var(--font-weight-semibold);
+  flex-shrink: 0;
+}
+
+.transaction-amount.positive {
+  color: var(--secondary-color);
+}
+
+.transaction-amount.negative {
+  color: var(--danger-color);
+}
+
+/* Currency Card */
+.currency-card {
+  padding: var(--spacing-xl);
+}
+
+.refresh-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-md);
+  border: none;
+  background: var(--bg-card);
+  color: var(--gray-400);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.refresh-btn:hover:not(:disabled) {
+  background: var(--bg-card-hover);
+  color: var(--white);
+}
+
+.refresh-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.refresh-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
+.spinning {
+  animation: spin 1s linear infinite;
+}
+
+.currency-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.currency-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-md);
+  background: var(--bg-card);
+  border-radius: var(--radius-md);
+  transition: background var(--transition-fast);
+}
+
+.currency-item:hover {
+  background: var(--bg-card-hover);
+}
+
+.currency-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.currency-code {
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--white);
+}
+
+.currency-name {
+  font-size: var(--text-xs);
+}
+
+.currency-rate {
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--accent-color);
+}
+
+/* Empty/Loading States */
+.empty-state,
+.loading-state {
+  padding: var(--spacing-2xl);
+  text-align: center;
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .balance-amount {
+    font-size: var(--text-3xl);
+  }
+
+  .balance-icon {
+    width: 50px;
+    height: 50px;
+    font-size: var(--text-2xl);
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+}
