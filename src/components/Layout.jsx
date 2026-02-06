@@ -14,6 +14,8 @@ const Layout = ({ children }) => {
 
   const handleLogout = () => {
     logout();
+    // Dispatch a custom event so App picks up the session change immediately
+    window.dispatchEvent(new Event('session-change'));
     navigate('/login');
   };
 

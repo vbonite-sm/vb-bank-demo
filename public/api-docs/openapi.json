@@ -1,0 +1,998 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "VB Bank Mock API",
+    "description": "Mock REST API documentation for VB Bank — a premium banking application built for automation testing. All endpoints are simulated client-side with configurable latency and error rates.\n\n### Authentication\nAll protected endpoints require a Bearer token in the Authorization header:\n```\nAuthorization: Bearer <access_token>\n```\nTokens are returned on login/register. Access tokens expire after 15 minutes and auto-refresh using the refresh token (7 days).\n\n### Developer Console\n```js\nwindow.__mockApi.configure({ logging: true })    // Log all requests\nwindow.__mockApi.configure({ errorRate: 0.1 })   // 10% random failures\nwindow.__mockApi.configure({ minDelay: 1000 })   // Slower responses\nwindow.__tokenService.getTokenInfo()              // Inspect token state\n```",
+    "version": "1.0.0",
+    "contact": {
+      "name": "VB Bank"
+    }
+  },
+  "servers": [
+    {
+      "url": "/api",
+      "description": "Mock API (client-side)"
+    }
+  ],
+  "tags": [
+    { "name": "Auth", "description": "Authentication & session management" },
+    { "name": "Account", "description": "Account details & balance" },
+    { "name": "Transactions", "description": "Transaction history & statistics" },
+    { "name": "Transfers", "description": "Money transfers between accounts" },
+    { "name": "Bills", "description": "Utility bill payments" },
+    { "name": "Cards", "description": "Virtual card management" },
+    { "name": "Loans", "description": "Loan applications" },
+    { "name": "Profile", "description": "User profile & password management" },
+    { "name": "Admin", "description": "Admin-only endpoints" },
+    { "name": "External", "description": "Real external API integrations" }
+  ],
+  "security": [
+    { "bearerAuth": [] }
+  ],
+  "paths": {
+    "/auth/login": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Login",
+        "description": "Authenticate a user and receive JWT access + refresh tokens.",
+        "operationId": "apiLogin",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["username", "password"],
+                "properties": {
+                  "username": { "type": "string", "example": "john.doe" },
+                  "password": { "type": "string", "example": "user123" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Login successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthResponse"
+                },
+                "example": {
+                  "success": true,
+                  "status": 201,
+                  "data": {
+                    "user": {
+                      "userId": "user_1234",
+                      "username": "john.doe",
+                      "fullName": "John Doe",
+                      "email": "john@example.com",
+                      "role": "user",
+                      "accountNumber": "1234567890",
+                      "loginTime": "2026-02-06T12:00:00.000Z"
+                    },
+                    "accessToken": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyXzEyMzQifQ.abc123",
+                    "refreshToken": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyXzEyMzQiLCJ0eXBlIjoicmVmcmVzaCJ9.def456",
+                    "expiresIn": 900,
+                    "tokenType": "Bearer"
+                  },
+                  "meta": {
+                    "requestId": "req_1234_abc",
+                    "timestamp": "2026-02-06T12:00:00.000Z",
+                    "duration": 350,
+                    "endpoint": "/api/auth/login",
+                    "method": "POST"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid credentials",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/register": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Register new user",
+        "description": "Create a new user account. Returns JWT tokens (auto-logged in). Starts with $0 balance.",
+        "operationId": "apiRegister",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["fullName", "username", "email", "password"],
+                "properties": {
+                  "fullName": { "type": "string", "example": "Jane Smith" },
+                  "username": { "type": "string", "example": "jane.smith" },
+                  "email": { "type": "string", "format": "email", "example": "jane@example.com" },
+                  "password": { "type": "string", "minLength": 6, "example": "pass123" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Registration successful (auto-logged in)",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" }
+              }
+            }
+          },
+          "400": {
+            "description": "Username or email already exists"
+          }
+        }
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Logout",
+        "description": "Destroy the current session and invalidate all tokens.",
+        "operationId": "apiLogout",
+        "responses": {
+          "201": { "description": "Logged out successfully. Tokens cleared." }
+        }
+      }
+    },
+    "/auth/session": {
+      "get": {
+        "tags": ["Auth"],
+        "summary": "Get current session",
+        "description": "Returns the current session. No latency delay (instant).",
+        "operationId": "apiGetSession",
+        "responses": {
+          "200": {
+            "description": "Active session found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" }
+              }
+            }
+          },
+          "400": { "description": "No active session (UNAUTHORIZED)" }
+        }
+      }
+    },
+    "/auth/refresh": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Refresh access token",
+        "description": "Use the refresh token to obtain a new access token. Called automatically when the access token is near expiry.",
+        "operationId": "apiRefreshToken",
+        "security": [],
+        "responses": {
+          "201": {
+            "description": "Token refreshed",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": true,
+                  "data": {
+                    "accessToken": "eyJhbGciOiJIUzI1NiJ9...",
+                    "tokenType": "Bearer"
+                  }
+                }
+              }
+            }
+          },
+          "400": { "description": "Refresh token expired — re-login required" }
+        }
+      }
+    },
+    "/account/balance": {
+      "get": {
+        "tags": ["Account"],
+        "summary": "Get balance",
+        "description": "Returns the current account balance for the given user.",
+        "operationId": "apiGetBalance",
+        "parameters": [
+          { "name": "userId", "in": "query", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Balance retrieved",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": true,
+                  "status": 200,
+                  "data": { "balance": 15000.00 }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/account/details": {
+      "get": {
+        "tags": ["Account"],
+        "summary": "Get account details",
+        "description": "Returns account number, name, balance, currency, email, and creation date.",
+        "operationId": "apiGetAccountDetails",
+        "parameters": [
+          { "name": "userId", "in": "query", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Account details",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AccountDetails" }
+              }
+            }
+          },
+          "400": { "description": "Account not found" }
+        }
+      }
+    },
+    "/account/profile": {
+      "get": {
+        "tags": ["Account"],
+        "summary": "Get full user profile",
+        "description": "Returns complete user profile including phone, address, documents. Password is excluded.",
+        "operationId": "apiGetUserProfile",
+        "parameters": [
+          { "name": "userId", "in": "query", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Full user profile" },
+          "400": { "description": "User not found" }
+        }
+      }
+    },
+    "/account/deposit": {
+      "post": {
+        "tags": ["Account"],
+        "summary": "Deposit money",
+        "description": "Add funds to a user's account.",
+        "operationId": "apiDepositMoney",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["userId", "amount"],
+                "properties": {
+                  "userId": { "type": "string" },
+                  "amount": { "type": "number", "minimum": 0.01, "example": 500 },
+                  "description": { "type": "string", "example": "Top Up via Payment Gateway" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Deposit successful",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": true,
+                  "data": {
+                    "transaction": { "id": "txn_123", "type": "deposit", "amount": 500 },
+                    "newBalance": 15500.00
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/account/withdraw": {
+      "post": {
+        "tags": ["Account"],
+        "summary": "Withdraw money",
+        "description": "Withdraw funds from a user's account.",
+        "operationId": "apiWithdrawMoney",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["userId", "amount"],
+                "properties": {
+                  "userId": { "type": "string" },
+                  "amount": { "type": "number", "minimum": 0.01 },
+                  "description": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Withdrawal successful" },
+          "400": { "description": "Insufficient balance" }
+        }
+      }
+    },
+    "/transactions": {
+      "get": {
+        "tags": ["Transactions"],
+        "summary": "Get user transactions",
+        "description": "Returns the user's transaction history, sorted newest first.",
+        "operationId": "apiGetTransactions",
+        "parameters": [
+          { "name": "userId", "in": "query", "required": true, "schema": { "type": "string" } },
+          { "name": "limit", "in": "query", "schema": { "type": "integer", "example": 5 }, "description": "Max number of transactions to return" }
+        ],
+        "responses": {
+          "200": {
+            "description": "Transaction list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "data": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/Transaction" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/transactions/stats": {
+      "get": {
+        "tags": ["Transactions"],
+        "summary": "Get transaction statistics",
+        "description": "Returns aggregated stats: total deposits, withdrawals, transfers in/out, and counts.",
+        "operationId": "apiGetTransactionStats",
+        "parameters": [
+          { "name": "userId", "in": "query", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Transaction statistics",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/TransactionStats" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/transfers": {
+      "post": {
+        "tags": ["Transfers"],
+        "summary": "Transfer money",
+        "description": "Transfer funds to another VB Bank user by account number. Creates transaction records for both sender and recipient.",
+        "operationId": "apiTransferMoney",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["fromUserId", "recipientAccount", "amount"],
+                "properties": {
+                  "fromUserId": { "type": "string" },
+                  "recipientAccount": { "type": "string", "example": "2345678901" },
+                  "amount": { "type": "number", "minimum": 0.01, "example": 100 },
+                  "description": { "type": "string", "example": "Lunch money" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Transfer successful",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": true,
+                  "data": {
+                    "transaction": {
+                      "id": "txn_456",
+                      "type": "transfer_out",
+                      "amount": 100,
+                      "recipientName": "Jane Smith"
+                    },
+                    "newBalance": 14900.00
+                  }
+                }
+              }
+            }
+          },
+          "400": { "description": "Insufficient balance / Account not found / Cannot transfer to self" }
+        }
+      }
+    },
+    "/users/search": {
+      "get": {
+        "tags": ["Transfers"],
+        "summary": "Search users",
+        "description": "Search for users by account number, name, or username. Used for recipient lookup during transfers.",
+        "operationId": "apiSearchUsers",
+        "parameters": [
+          { "name": "q", "in": "query", "required": true, "schema": { "type": "string", "example": "jane" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Search results",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": true,
+                  "data": [
+                    { "id": "user_2", "fullName": "Jane Smith", "accountNumber": "2345678901", "username": "jane.smith" }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/bills/pay": {
+      "post": {
+        "tags": ["Bills"],
+        "summary": "Pay a bill",
+        "description": "Pay a utility bill. Supports payment from account balance or via card (gateway redirect).",
+        "operationId": "apiPayBill",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["userId", "provider", "amount"],
+                "properties": {
+                  "userId": { "type": "string" },
+                  "provider": { "type": "string", "enum": ["electric", "water", "internet", "gas", "phone", "streaming"], "example": "electric" },
+                  "amount": { "type": "number", "minimum": 0.01, "example": 75.50 },
+                  "description": { "type": "string", "example": "January electricity bill" },
+                  "paymentMethod": { "type": "string", "enum": ["account", "card"], "default": "account" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Bill paid successfully" },
+          "400": { "description": "Insufficient balance" }
+        }
+      }
+    },
+    "/bills/history": {
+      "get": {
+        "tags": ["Bills"],
+        "summary": "Get bill payment history",
+        "description": "Returns the user's bill payment history, sorted newest first.",
+        "operationId": "apiGetBillHistory",
+        "parameters": [
+          { "name": "userId", "in": "query", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Bill payment history" }
+        }
+      }
+    },
+    "/cards": {
+      "get": {
+        "tags": ["Cards"],
+        "summary": "Get virtual cards",
+        "description": "Returns all virtual cards for the user, sorted by creation date.",
+        "operationId": "apiGetCards",
+        "parameters": [
+          { "name": "userId", "in": "query", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of virtual cards",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/VirtualCard" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cards/{cardId}/freeze": {
+      "put": {
+        "tags": ["Cards"],
+        "summary": "Freeze a card",
+        "description": "Temporarily freeze an active virtual card. Can be unfrozen later.",
+        "operationId": "apiFreezeCard",
+        "parameters": [
+          { "name": "cardId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Card frozen" },
+          "400": { "description": "Card not found or already blocked" }
+        }
+      }
+    },
+    "/cards/{cardId}/unfreeze": {
+      "put": {
+        "tags": ["Cards"],
+        "summary": "Unfreeze a card",
+        "description": "Reactivate a frozen virtual card.",
+        "operationId": "apiUnfreezeCard",
+        "parameters": [
+          { "name": "cardId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Card unfrozen" },
+          "400": { "description": "Card is not frozen" }
+        }
+      }
+    },
+    "/cards/{cardId}": {
+      "delete": {
+        "tags": ["Cards"],
+        "summary": "Block a card (permanent)",
+        "description": "Permanently block a virtual card. This action cannot be undone.",
+        "operationId": "apiBlockCard",
+        "parameters": [
+          { "name": "cardId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Card blocked" },
+          "400": { "description": "Card already blocked" }
+        }
+      }
+    },
+    "/cards/{cardId}/pin": {
+      "get": {
+        "tags": ["Cards"],
+        "summary": "Get card PIN",
+        "description": "Retrieve the PIN for a virtual card.",
+        "operationId": "apiGetCardPIN",
+        "parameters": [
+          { "name": "cardId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Card PIN",
+            "content": {
+              "application/json": {
+                "example": { "success": true, "data": { "pin": "1234" } }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/loans/apply": {
+      "post": {
+        "tags": ["Loans"],
+        "summary": "Apply for a loan",
+        "description": "Submit a loan application. Monthly payment is auto-calculated based on amount, term, and interest rate.",
+        "operationId": "apiApplyForLoan",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["userId", "loanType", "amount", "term"],
+                "properties": {
+                  "userId": { "type": "string" },
+                  "loanType": { "type": "string", "enum": ["personal", "auto", "home", "education"] },
+                  "amount": { "type": "number", "example": 25000 },
+                  "term": { "type": "integer", "description": "Loan term in months", "example": 36 }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Application submitted",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/LoanApplication" }
+              }
+            }
+          },
+          "400": { "description": "Invalid amount or term range" }
+        }
+      }
+    },
+    "/loans": {
+      "get": {
+        "tags": ["Loans"],
+        "summary": "Get loan applications",
+        "description": "Returns all loan applications for the user.",
+        "operationId": "apiGetLoanApplications",
+        "parameters": [
+          { "name": "userId", "in": "query", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Loan applications list" }
+        }
+      }
+    },
+    "/profile": {
+      "put": {
+        "tags": ["Profile"],
+        "summary": "Update profile",
+        "description": "Update allowed profile fields: fullName, email, phone, passportNumber, driversLicense, address, dateOfBirth.",
+        "operationId": "apiUpdateProfile",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "userId": { "type": "string" },
+                  "fullName": { "type": "string" },
+                  "email": { "type": "string", "format": "email" },
+                  "phone": { "type": "string" },
+                  "passportNumber": { "type": "string" },
+                  "driversLicense": { "type": "string" },
+                  "dateOfBirth": { "type": "string", "format": "date" },
+                  "address": {
+                    "type": "object",
+                    "properties": {
+                      "street": { "type": "string" },
+                      "city": { "type": "string" },
+                      "state": { "type": "string" },
+                      "zip": { "type": "string" },
+                      "country": { "type": "string" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Profile updated" },
+          "400": { "description": "User not found" }
+        }
+      }
+    },
+    "/profile/password": {
+      "put": {
+        "tags": ["Profile"],
+        "summary": "Change password",
+        "description": "Change the user's password. Requires current password for verification.",
+        "operationId": "apiChangePassword",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["userId", "currentPassword", "newPassword"],
+                "properties": {
+                  "userId": { "type": "string" },
+                  "currentPassword": { "type": "string" },
+                  "newPassword": { "type": "string", "minLength": 6 }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Password changed" },
+          "400": { "description": "Current password incorrect or new password too short" }
+        }
+      }
+    },
+    "/admin/users": {
+      "get": {
+        "tags": ["Admin"],
+        "summary": "Get all users",
+        "description": "Returns all non-admin users. Admin only.",
+        "operationId": "apiGetAllUsers",
+        "responses": {
+          "200": { "description": "List of all users" }
+        }
+      }
+    },
+    "/admin/users/{userId}": {
+      "get": {
+        "tags": ["Admin"],
+        "summary": "Get user details",
+        "description": "Returns full user details including last 10 transactions. Admin only.",
+        "operationId": "apiGetUserDetails",
+        "parameters": [
+          { "name": "userId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "User details with transactions" },
+          "400": { "description": "User not found" }
+        }
+      }
+    },
+    "/admin/stats": {
+      "get": {
+        "tags": ["Admin"],
+        "summary": "Get system statistics",
+        "description": "Returns system-wide stats: total users, balances, transaction counts, averages, and the richest user.",
+        "operationId": "apiGetSystemStats",
+        "responses": {
+          "200": {
+            "description": "System statistics",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SystemStats" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/trends": {
+      "get": {
+        "tags": ["Admin"],
+        "summary": "Get transaction trends",
+        "description": "Returns transaction data grouped by date for chart visualization.",
+        "operationId": "apiGetTransactionTrends",
+        "parameters": [
+          { "name": "days", "in": "query", "schema": { "type": "integer", "default": 30 } }
+        ],
+        "responses": {
+          "200": { "description": "Transaction trend data" }
+        }
+      }
+    },
+    "/admin/transactions": {
+      "get": {
+        "tags": ["Admin"],
+        "summary": "Get all transactions",
+        "description": "Returns all system transactions. Admin only.",
+        "operationId": "apiGetAllTransactions",
+        "parameters": [
+          { "name": "limit", "in": "query", "schema": { "type": "integer" } }
+        ],
+        "responses": {
+          "200": { "description": "All transactions" }
+        }
+      }
+    },
+    "/admin/users/search": {
+      "get": {
+        "tags": ["Admin"],
+        "summary": "Search users (admin)",
+        "description": "Search users by account number, name, username, or email. Admin only.",
+        "operationId": "apiSearchUsersAdmin",
+        "parameters": [
+          { "name": "q", "in": "query", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Search results" }
+        }
+      }
+    },
+    "/admin/users/{userId}/activity": {
+      "get": {
+        "tags": ["Admin"],
+        "summary": "Get user activity summary",
+        "description": "Returns transaction counts by type and last activity timestamp. Admin only.",
+        "operationId": "apiGetUserActivity",
+        "parameters": [
+          { "name": "userId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "User activity summary" }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "JWT access token obtained from /auth/login or /auth/register. Expires after 15 minutes and is auto-refreshed using the refresh token."
+      }
+    },
+    "schemas": {
+      "AuthResponse": {
+        "type": "object",
+        "description": "Response from login/register containing user session and JWT tokens",
+        "properties": {
+          "success": { "type": "boolean", "example": true },
+          "status": { "type": "integer", "example": 201 },
+          "data": {
+            "type": "object",
+            "properties": {
+              "user": {
+                "type": "object",
+                "properties": {
+                  "userId": { "type": "string" },
+                  "username": { "type": "string" },
+                  "fullName": { "type": "string" },
+                  "email": { "type": "string" },
+                  "role": { "type": "string", "enum": ["user", "admin"] },
+                  "accountNumber": { "type": "string" },
+                  "loginTime": { "type": "string", "format": "date-time" }
+                }
+              },
+              "accessToken": { "type": "string", "description": "JWT access token (15 min expiry)" },
+              "refreshToken": { "type": "string", "description": "JWT refresh token (7 day expiry)" },
+              "expiresIn": { "type": "integer", "description": "Access token TTL in seconds", "example": 900 },
+              "tokenType": { "type": "string", "example": "Bearer" }
+            }
+          },
+          "meta": { "$ref": "#/components/schemas/ResponseMeta" }
+        }
+      },
+      "UnauthorizedError": {
+        "type": "object",
+        "description": "Returned when the request has no valid Bearer token",
+        "properties": {
+          "success": { "type": "boolean", "example": false },
+          "status": { "type": "integer", "example": 401 },
+          "error": {
+            "type": "object",
+            "properties": {
+              "code": { "type": "string", "enum": ["UNAUTHORIZED", "TOKEN_EXPIRED"] },
+              "message": { "type": "string", "example": "Authentication required. Please log in." }
+            }
+          }
+        }
+      },
+      "ApiResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "status": { "type": "integer", "example": 200 },
+          "data": { "type": "object" },
+          "meta": { "$ref": "#/components/schemas/ResponseMeta" }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean", "example": false },
+          "status": { "type": "integer", "example": 400 },
+          "error": {
+            "type": "object",
+            "properties": {
+              "code": { "type": "string", "example": "INVALID_CREDENTIALS" },
+              "message": { "type": "string", "example": "Invalid username or password" }
+            }
+          },
+          "meta": { "$ref": "#/components/schemas/ResponseMeta" }
+        }
+      },
+      "ResponseMeta": {
+        "type": "object",
+        "properties": {
+          "requestId": { "type": "string", "example": "req_1707220800000_abc123" },
+          "timestamp": { "type": "string", "format": "date-time" },
+          "duration": { "type": "integer", "description": "Response time in ms", "example": 350 },
+          "endpoint": { "type": "string", "example": "/api/auth/login" },
+          "method": { "type": "string", "example": "POST" }
+        }
+      },
+      "AccountDetails": {
+        "type": "object",
+        "properties": {
+          "accountNumber": { "type": "string", "example": "1234567890" },
+          "fullName": { "type": "string", "example": "John Doe" },
+          "balance": { "type": "number", "example": 15000.00 },
+          "currency": { "type": "string", "example": "USD" },
+          "email": { "type": "string", "example": "john@example.com" },
+          "createdAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "Transaction": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "example": "txn_1234" },
+          "userId": { "type": "string" },
+          "type": { "type": "string", "enum": ["deposit", "withdrawal", "transfer_out", "transfer_in", "bill_payment"] },
+          "amount": { "type": "number", "example": 250.00 },
+          "currency": { "type": "string", "example": "USD" },
+          "description": { "type": "string", "example": "Transfer to Jane Smith" },
+          "status": { "type": "string", "enum": ["completed", "pending", "failed"] },
+          "timestamp": { "type": "string", "format": "date-time" },
+          "recipientName": { "type": "string" },
+          "recipientAccount": { "type": "string" },
+          "senderName": { "type": "string" },
+          "senderAccount": { "type": "string" }
+        }
+      },
+      "TransactionStats": {
+        "type": "object",
+        "properties": {
+          "totalTransactions": { "type": "integer" },
+          "totalDeposits": { "type": "number" },
+          "totalWithdrawals": { "type": "number" },
+          "totalTransfersOut": { "type": "number" },
+          "totalTransfersIn": { "type": "number" },
+          "depositCount": { "type": "integer" },
+          "withdrawalCount": { "type": "integer" },
+          "transferOutCount": { "type": "integer" },
+          "transferInCount": { "type": "integer" }
+        }
+      },
+      "VirtualCard": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "example": "card_001" },
+          "userId": { "type": "string" },
+          "cardNumber": { "type": "string", "example": "4532XXXXXXXX1234" },
+          "cardType": { "type": "string", "enum": ["debit", "credit"] },
+          "status": { "type": "string", "enum": ["active", "frozen", "blocked"] },
+          "expiryDate": { "type": "string", "example": "12/28" },
+          "pin": { "type": "string", "example": "1234" },
+          "createdAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "LoanApplication": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "example": "loan_app_001" },
+          "userId": { "type": "string" },
+          "loanType": { "type": "string", "enum": ["personal", "auto", "home", "education"] },
+          "loanTypeName": { "type": "string", "example": "Personal Loan" },
+          "amount": { "type": "number", "example": 25000 },
+          "term": { "type": "integer", "description": "Term in months", "example": 36 },
+          "interestRate": { "type": "number", "example": 8.5 },
+          "monthlyPayment": { "type": "number", "example": 789.25 },
+          "status": { "type": "string", "enum": ["pending", "approved", "rejected"] },
+          "applicationDate": { "type": "string", "format": "date-time" }
+        }
+      },
+      "SystemStats": {
+        "type": "object",
+        "properties": {
+          "totalUsers": { "type": "integer" },
+          "activeUsers": { "type": "integer" },
+          "totalBalance": { "type": "number" },
+          "averageBalance": { "type": "number" },
+          "totalTransactions": { "type": "integer" },
+          "recentTransactions": { "type": "integer" },
+          "totalDeposits": { "type": "number" },
+          "totalWithdrawals": { "type": "number" },
+          "totalTransfers": { "type": "number" },
+          "depositCount": { "type": "integer" },
+          "withdrawalCount": { "type": "integer" },
+          "transferCount": { "type": "integer" },
+          "richestUser": {
+            "type": "object",
+            "properties": {
+              "fullName": { "type": "string" },
+              "accountNumber": { "type": "string" },
+              "balance": { "type": "number" }
+            }
+          }
+        }
+      }
+    }
+  }
+}

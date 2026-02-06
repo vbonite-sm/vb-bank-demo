@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { FiUser, FiLock, FiArrowRight } from 'react-icons/fi';
-import { login } from '../services/authService';
+import { apiLogin } from '../services/authApi';
 import './Auth.css';
 
 const Login = () => {
@@ -28,17 +28,18 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const result = login(formData.username, formData.password);
+      const response = await apiLogin(formData.username, formData.password);
 
-      if (result.success) {
-        // Navigate based on user role
-        if (result.user.role === 'admin') {
+      if (response.success) {
+        const user = response.data.user;
+        window.dispatchEvent(new Event('session-change'));
+        if (user.role === 'admin') {
           navigate('/admin/dashboard');
         } else {
           navigate('/dashboard');
         }
       } else {
-        setError(result.error);
+        setError(response.error?.message || 'Invalid credentials');
       }
     } catch (err) {
       setError('An error occurred during login');
@@ -48,18 +49,23 @@ const Login = () => {
   };
 
   // Quick login helpers for testing
-  const quickLogin = (username, password) => {
+  const quickLogin = async (username, password) => {
     setFormData({ username, password });
-    setTimeout(() => {
-      const result = login(username, password);
-      if (result.success) {
-        if (result.user.role === 'admin') {
+    setLoading(true);
+    try {
+      const response = await apiLogin(username, password);
+      if (response.success) {
+        const user = response.data.user;
+        window.dispatchEvent(new Event('session-change'));
+        if (user.role === 'admin') {
           navigate('/admin/dashboard');
         } else {
           navigate('/dashboard');
         }
       }
-    }, 100);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

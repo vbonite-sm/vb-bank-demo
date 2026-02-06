@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiCheckCircle, FiChevronRight, FiChevronLeft, FiAlertCircle, FiDollarSign } from 'react-icons/fi';
 import { getCurrentSession } from '../../services/authService';
-import { applyForLoan, getLoanApplicationsForUser } from '../../services/bankService';
+import { apiApplyForLoan, apiGetLoanApplications } from '../../services/bankApi';
 import { LOAN_OPTIONS } from '../../utils/seeder';
 import { useBuggy } from '../../context/BuggyContext';
 import './Loan.css';
@@ -24,9 +24,9 @@ const Loan = () => {
     loadApplications();
   }, []);
 
-  const loadApplications = () => {
-    const userApplications = getLoanApplicationsForUser(session.userId);
-    setApplications(userApplications);
+  const loadApplications = async () => {
+    const response = await apiGetLoanApplications(session.userId);
+    if (response.success) setApplications(response.data);
   };
 
   const selectedLoanOption = LOAN_OPTIONS.find(l => l.id === loanType);
@@ -95,14 +95,14 @@ const Loan = () => {
 
     try {
       await buggyOperation(async () => {
-        const result = applyForLoan(
+        const response = await apiApplyForLoan(
           session.userId,
           loanType,
           parseFloat(amount),
           parseInt(term)
         );
 
-        if (result.success) {
+        if (response.success) {
           setSuccess('Loan application submitted successfully!');
           setCurrentStep(1);
           setLoanType('');
@@ -110,7 +110,7 @@ const Loan = () => {
           setTerm('');
           loadApplications();
         } else {
-          setError(result.error);
+          setError(response.error?.message || 'Application failed');
         }
       });
     } catch (err) {

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { FiSend, FiUser, FiDollarSign, FiFileText, FiCheckCircle, FiAlertCircle } from 'react-icons/fi';
 import { getCurrentSession } from '../../services/authService';
-import { transferMoney, searchUsers, getAccountDetails } from '../../services/bankService';
+import { apiTransferMoney, apiSearchUsers, apiGetAccountDetails } from '../../services/bankApi';
 import './Transfer.css';
 
 const Transfer = () => {
@@ -19,10 +19,13 @@ const Transfer = () => {
   const [accountDetails, setAccountDetails] = useState(null);
 
   useState(() => {
-    if (session) {
-      const details = getAccountDetails(session.userId);
-      setAccountDetails(details);
-    }
+    const loadDetails = async () => {
+      if (session) {
+        const response = await apiGetAccountDetails(session.userId);
+        if (response.success) setAccountDetails(response.data);
+      }
+    };
+    loadDetails();
   }, []);
 
   const handleChange = (e) => {
@@ -36,8 +39,9 @@ const Transfer = () => {
 
     // Search for users when typing in recipient account
     if (name === 'recipientAccount' && value.length >= 3) {
-      const results = searchUsers(value);
-      setSearchResults(results);
+      apiSearchUsers(value).then(response => {
+        if (response.success) setSearchResults(response.data);
+      });
     } else if (name === 'recipientAccount') {
       setSearchResults([]);
     }
@@ -67,23 +71,23 @@ const Transfer = () => {
       }
 
       // Perform transfer
-      const result = transferMoney(
+      const response = await apiTransferMoney(
         session.userId,
         formData.recipientAccount,
         amount,
         formData.description
       );
 
-      if (result.success) {
+      if (response.success) {
         setSuccess({
-          message: result.message,
-          newBalance: result.newBalance,
-          transaction: result.transaction
+          message: 'Transfer successful',
+          newBalance: response.data.newBalance,
+          transaction: response.data.transaction
         });
 
         // Update account details
-        const updatedDetails = getAccountDetails(session.userId);
-        setAccountDetails(updatedDetails);
+        const updatedDetails = await apiGetAccountDetails(session.userId);
+        if (updatedDetails.success) setAccountDetails(updatedDetails.data);
 
         // Reset form
         setFormData({
@@ -92,7 +96,7 @@ const Transfer = () => {
           description: ''
         });
       } else {
-        setError(result.error);
+        setError(response.error?.message || 'Transfer failed');
       }
     } catch (err) {
       setError('An error occurred during the transfer');

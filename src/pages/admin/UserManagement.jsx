@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { FiSearch, FiMail, FiCalendar, FiDollarSign, FiUser, FiX } from 'react-icons/fi';
-import { getAllUsers, getUserDetails, searchUsersAdmin } from '../../services/adminService';
+import { apiGetAllUsers, apiGetUserDetails, apiSearchUsers } from '../../services/adminApi';
 import './UserManagement.css';
 
 const UserManagement = () => {
@@ -19,25 +19,29 @@ const UserManagement = () => {
     applySearch();
   }, [searchTerm, users]);
 
-  const loadUsers = () => {
-    const allUsers = getAllUsers();
-    setUsers(allUsers);
-    setFilteredUsers(allUsers);
+  const loadUsers = async () => {
+    const response = await apiGetAllUsers();
+    if (response.success) {
+      setUsers(response.data);
+      setFilteredUsers(response.data);
+    }
   };
 
-  const applySearch = () => {
+  const applySearch = async () => {
     if (searchTerm) {
-      const results = searchUsersAdmin(searchTerm);
-      setFilteredUsers(results);
+      const response = await apiSearchUsers(searchTerm);
+      if (response.success) setFilteredUsers(response.data);
     } else {
       setFilteredUsers(users);
     }
   };
 
-  const viewUserDetails = (userId) => {
-    const details = getUserDetails(userId);
-    setUserDetails(details);
-    setSelectedUser(userId);
+  const viewUserDetails = async (userId) => {
+    const response = await apiGetUserDetails(userId);
+    if (response.success) {
+      setUserDetails(response.data);
+      setSelectedUser(userId);
+    }
   };
 
   const closeUserDetails = () => {

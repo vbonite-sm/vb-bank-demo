@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { FiDollarSign, FiTrendingUp, FiTrendingDown, FiCreditCard, FiRefreshCw } from 'react-icons/fi';
 import { getCurrentSession } from '../../services/authService';
-import { getAccountDetails, getUserTransactions, getTransactionStats } from '../../services/bankService';
+import { apiGetAccountDetails, apiGetTransactions, apiGetTransactionStats } from '../../services/bankApi';
 import { getPopularCurrencies, getCurrencySymbol } from '../../services/apiService';
 import CryptoWidget from '../../components/CryptoWidget';
 import './Dashboard.css';
@@ -20,15 +20,17 @@ const Dashboard = () => {
     loadCurrencyRates();
   }, []);
 
-  const loadDashboardData = () => {
+  const loadDashboardData = async () => {
     if (session) {
-      const details = getAccountDetails(session.userId);
-      const transactions = getUserTransactions(session.userId, 5);
-      const transactionStats = getTransactionStats(session.userId);
+      const [detailsRes, transactionsRes, statsRes] = await Promise.all([
+        apiGetAccountDetails(session.userId),
+        apiGetTransactions(session.userId, 5),
+        apiGetTransactionStats(session.userId)
+      ]);
 
-      setAccountDetails(details);
-      setRecentTransactions(transactions);
-      setStats(transactionStats);
+      if (detailsRes.success) setAccountDetails(detailsRes.data);
+      if (transactionsRes.success) setRecentTransactions(transactionsRes.data);
+      if (statsRes.success) setStats(statsRes.data);
     }
   };
 

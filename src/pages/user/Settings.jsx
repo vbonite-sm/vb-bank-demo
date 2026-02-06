@@ -2,8 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { FiUser, FiLock, FiCheckCircle, FiAlertCircle, FiSave } from 'react-icons/fi';
 import { getCurrentSession } from '../../services/authService';
-import { updateUserProfile, changePassword } from '../../services/bankService';
-import { getUsers } from '../../utils/seeder';
+import { apiUpdateProfile, apiChangePassword, apiGetUserProfile } from '../../services/bankApi';
 import { useBuggy } from '../../context/BuggyContext';
 import './Settings.css';
 
@@ -40,10 +39,10 @@ const Settings = () => {
     loadUserData();
   }, []);
 
-  const loadUserData = () => {
-    const users = getUsers();
-    const currentUser = users.find(u => u.id === session.userId);
-    if (currentUser) {
+  const loadUserData = async () => {
+    const response = await apiGetUserProfile(session.userId);
+    if (response.success) {
+      const currentUser = response.data;
       setUser(currentUser);
       setFullName(currentUser.fullName || '');
       setEmail(currentUser.email || '');
@@ -67,7 +66,7 @@ const Settings = () => {
 
     try {
       await buggyOperation(async () => {
-        const result = updateUserProfile(session.userId, {
+        const response = await apiUpdateProfile(session.userId, {
           fullName,
           email,
           phone,
@@ -83,11 +82,11 @@ const Settings = () => {
           }
         });
 
-        if (result.success) {
+        if (response.success) {
           setSuccess('Profile updated successfully!');
           loadUserData();
         } else {
-          setError(result.error);
+          setError(response.error?.message || 'Update failed');
         }
       });
     } catch (err) {
@@ -111,15 +110,15 @@ const Settings = () => {
 
     try {
       await buggyOperation(async () => {
-        const result = changePassword(session.userId, currentPassword, newPassword);
+        const response = await apiChangePassword(session.userId, currentPassword, newPassword);
 
-        if (result.success) {
+        if (response.success) {
           setSuccess('Password changed successfully!');
           setCurrentPassword('');
           setNewPassword('');
           setConfirmPassword('');
         } else {
-          setError(result.error);
+          setError(response.error?.message || 'Password change failed');
         }
       });
     } catch (err) {

@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { FiCheckCircle, FiAlertCircle } from 'react-icons/fi';
 import { getCurrentSession } from '../../services/authService';
-import { depositMoney, getBalance } from '../../services/bankService';
+import { apiDepositMoney, apiGetBalance } from '../../services/bankApi';
 import { generateSessionId } from '../../services/paymentGatewayService';
 import './TopUp.css';
 
@@ -23,12 +23,12 @@ const TopUp = () => {
     checkPaymentStatus();
   }, []);
 
-  const loadBalance = () => {
-    const userBalance = getBalance(session.userId);
-    setBalance(userBalance);
+  const loadBalance = async () => {
+    const response = await apiGetBalance(session.userId);
+    if (response.success) setBalance(response.data.balance);
   };
 
-  const checkPaymentStatus = () => {
+  const checkPaymentStatus = async () => {
     // Check if returning from gateway
     const status = searchParams.get('status');
     const transactionId = searchParams.get('transactionId');
@@ -49,13 +49,13 @@ const TopUp = () => {
       sessionStorage.setItem(processedKey, 'true');
 
       // Payment was successful, credit the account
-      const result = depositMoney(
+      const response = await apiDepositMoney(
         session.userId,
         parseFloat(paymentAmount),
         'Top Up via Payment Gateway'
       );
 
-      if (result.success) {
+      if (response.success) {
         setSuccess(`Successfully added $${parseFloat(paymentAmount).toFixed(2)} to your account!`);
         loadBalance();
       } else {

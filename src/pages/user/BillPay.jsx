@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { FiZap, FiCheckCircle, FiAlertCircle } from 'react-icons/fi';
 import { getCurrentSession } from '../../services/authService';
-import { payBill, getBillPaymentHistory, getBalance } from '../../services/bankService';
+import { apiPayBill, apiGetBillHistory, apiGetBalance } from '../../services/bankApi';
 import { UTILITY_PROVIDERS } from '../../utils/seeder';
 import { generateSessionId } from '../../services/paymentGatewayService';
 import { useBuggy } from '../../context/BuggyContext';
@@ -43,7 +43,7 @@ const BillPay = () => {
         if (intent.userId === session.userId) {
           try {
             // Record the payment
-            const result = payBill(
+            const response = await apiPayBill(
               intent.userId,
               intent.provider,
               intent.amount,
@@ -51,7 +51,7 @@ const BillPay = () => {
               'card'
             );
 
-            if (result.success) {
+            if (response.success) {
               setSuccess('Card payment successful! Bill has been paid.');
               sessionStorage.removeItem('payment_intent');
               // Clear URL params
@@ -72,11 +72,12 @@ const BillPay = () => {
 
   const loadData = async () => {
     try {
-      const userBalance = getBalance(session.userId);
-      setBalance(userBalance);
-
-      const billHistory = getBillPaymentHistory(session.userId);
-      setHistory(billHistory);
+      const [balanceRes, historyRes] = await Promise.all([
+        apiGetBalance(session.userId),
+        apiGetBillHistory(session.userId)
+      ]);
+      if (balanceRes.success) setBalance(balanceRes.data.balance);
+      if (historyRes.success) setHistory(historyRes.data);
     } catch (err) {
       console.error('Error loading data:', err);
     }
@@ -104,7 +105,7 @@ const BillPay = () => {
       await buggyOperation(async () => {
         if (paymentMethod === 'account') {
           // Pay from account balance
-          const result = payBill(
+          const response = await apiPayBill(
             session.userId,
             provider,
             billAmount,
@@ -112,14 +113,14 @@ const BillPay = () => {
             'account'
           );
 
-          if (result.success) {
+          if (response.success) {
             setSuccess('Bill paid successfully from your account!');
             setProvider('');
             setAmount('');
             setDescription('');
             loadData();
           } else {
-            setError(result.error);
+            setError(response.error?.message || 'Payment failed');
           }
         } else {
           // Pay with card - redirect to gateway

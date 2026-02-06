@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { FiUser, FiLock, FiMail, FiUserPlus } from 'react-icons/fi';
-import { register } from '../services/authService';
+import { apiRegister } from '../services/authApi';
 import './Auth.css';
 
 const Register = () => {
@@ -65,18 +65,19 @@ const Register = () => {
     setLoading(true);
 
     try {
-      const result = register({
+      const response = await apiRegister({
         fullName: formData.fullName,
         username: formData.username,
         email: formData.email,
         password: formData.password
       });
 
-      if (result.success) {
+      if (response.success) {
         // Auto-login and navigate to dashboard
+        window.dispatchEvent(new Event('session-change'));
         navigate('/dashboard');
       } else {
-        setError(result.error);
+        setError(response.error?.message || 'Registration failed');
       }
     } catch (err) {
       setError('An error occurred during registration');

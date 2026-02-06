@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiCreditCard, FiLock, FiUnlock, FiShield, FiEye, FiEyeOff, FiX } from 'react-icons/fi';
 import { getCurrentSession } from '../../services/authService';
-import { getVirtualCardsForUser, freezeCard, unfreezeCard, blockCard, getCardPIN } from '../../services/bankService';
+import { apiGetCards, apiFreezeCard, apiUnfreezeCard, apiBlockCard, apiGetCardPIN } from '../../services/bankApi';
 import { maskCardNumber, getCardType } from '../../services/paymentGatewayService';
 import { useBuggy } from '../../context/BuggyContext';
 import './Cards.css';
@@ -24,8 +24,8 @@ const Cards = () => {
 
   const loadCards = async () => {
     try {
-      const userCards = getVirtualCardsForUser(session.userId);
-      setCards(userCards);
+      const response = await apiGetCards(session.userId);
+      if (response.success) setCards(response.data);
     } catch (err) {
       console.error('Error loading cards:', err);
     }
@@ -39,15 +39,15 @@ const Cards = () => {
       await buggyOperation(async () => {
         let result;
         if (card.status === 'frozen') {
-          result = unfreezeCard(session.userId, card.id);
+          result = await apiUnfreezeCard(session.userId, card.id);
         } else if (card.status === 'active') {
-          result = freezeCard(session.userId, card.id);
+          result = await apiFreezeCard(session.userId, card.id);
         }
 
         if (result && result.success) {
           loadCards();
         } else {
-          setError(result?.error || 'Operation failed');
+          setError(result?.error?.message || 'Operation failed');
         }
       });
     } catch (err) {
@@ -67,12 +67,12 @@ const Cards = () => {
 
     try {
       await buggyOperation(async () => {
-        const result = blockCard(session.userId, card.id);
+        const result = await apiBlockCard(session.userId, card.id);
 
         if (result.success) {
           loadCards();
         } else {
-          setError(result.error);
+          setError(result.error?.message || 'Failed to block card');
         }
       });
     } catch (err) {
@@ -88,13 +88,13 @@ const Cards = () => {
 
     try {
       await buggyOperation(async () => {
-        const result = getCardPIN(session.userId, card.id);
+        const result = await apiGetCardPIN(session.userId, card.id);
 
         if (result.success) {
-          setCardPIN(result.pin);
+          setCardPIN(result.data.pin);
           setShowPINModal(true);
         } else {
-          setError(result.error);
+          setError(result.error?.message || 'Failed to get PIN');
         }
       });
     } catch (err) {

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { FiUsers, FiDollarSign, FiTrendingUp, FiActivity } from 'react-icons/fi';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line } from 'recharts';
-import { getSystemStats, getAllTransactions, getTransactionTrends } from '../../services/adminService';
+import { apiGetSystemStats, apiGetAllTransactions, apiGetTransactionTrends } from '../../services/adminApi';
 import './AdminDashboard.css';
 
 const AdminDashboard = () => {
@@ -14,14 +14,16 @@ const AdminDashboard = () => {
     loadDashboardData();
   }, []);
 
-  const loadDashboardData = () => {
-    const systemStats = getSystemStats();
-    const transactions = getAllTransactions(10);
-    const transactionTrends = getTransactionTrends(30);
+  const loadDashboardData = async () => {
+    const [statsRes, transactionsRes, trendsRes] = await Promise.all([
+      apiGetSystemStats(),
+      apiGetAllTransactions(10),
+      apiGetTransactionTrends(30)
+    ]);
 
-    setStats(systemStats);
-    setRecentTransactions(transactions);
-    setTrends(transactionTrends);
+    if (statsRes.success) setStats(statsRes.data);
+    if (transactionsRes.success) setRecentTransactions(transactionsRes.data);
+    if (trendsRes.success) setTrends(trendsRes.data);
   };
 
   const formatCurrency = (amount) => {

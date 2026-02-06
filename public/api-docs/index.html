@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VB Bank — API Documentation</title>
+  <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@5.18.2/swagger-ui.css" />
+  <style>
+    html { box-sizing: border-box; overflow-y: scroll; }
+    *, *::before, *::after { box-sizing: inherit; }
+    body { margin: 0; background: #fafafa; }
+
+    /* Top bar */
+    .topbar-wrapper {
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+    }
+    .topbar-wrapper .link {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .topbar-wrapper .link::before {
+      content: "🏦";
+      font-size: 22px;
+    }
+    /* Custom brand colour */
+    .swagger-ui .topbar {
+      background-color: #1a1a2e !important;
+    }
+    /* Back link */
+    .back-link {
+      position: fixed;
+      top: 12px;
+      right: 24px;
+      z-index: 999;
+      color: #fff;
+      font-family: system-ui, sans-serif;
+      font-size: 14px;
+      text-decoration: none;
+      opacity: 0.8;
+      transition: opacity 0.2s;
+    }
+    .back-link:hover { opacity: 1; }
+  </style>
+</head>
+<body>
+  <a class="back-link" href="/">← Back to VB Bank</a>
+  <div id="swagger-ui"></div>
+
+  <script src="https://unpkg.com/swagger-ui-dist@5.18.2/swagger-ui-bundle.js" crossorigin></script>
+  <script src="https://unpkg.com/swagger-ui-dist@5.18.2/swagger-ui-standalone-preset.js" crossorigin></script>
+  <script>
+    window.onload = () => {
+      SwaggerUIBundle({
+        url: "/api-docs/openapi.json",
+        dom_id: "#swagger-ui",
+        deepLinking: true,
+        presets: [
+          SwaggerUIBundle.presets.apis,
+          SwaggerUIStandalonePreset,
+        ],
+        plugins: [
+          SwaggerUIBundle.plugins.DownloadUrl,
+        ],
+        layout: "StandaloneLayout",
+        docExpansion: "list",
+        filter: true,
+        tagsSorter: "alpha",
+        operationsSorter: "alpha",
+        defaultModelsExpandDepth: 2,
+      });
+    };
+  </script>
+</body>
+</html>

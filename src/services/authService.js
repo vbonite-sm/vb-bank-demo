@@ -1,6 +1,7 @@
 // Authentication Service - Handles login, logout, and session management
 
 import { getUsers, updateUsers, generateId } from '../utils/seeder';
+import { generateTokens, clearTokens } from './tokenService';
 
 // Get current session
 export const getCurrentSession = () => {
@@ -38,9 +39,11 @@ export const login = (username, password) => {
   }
 
   const session = setSession(user);
+  const tokens = generateTokens(session);
   return {
     success: true,
-    user: session
+    user: session,
+    tokens
   };
 };
 
@@ -90,16 +93,19 @@ export const register = (userData) => {
 
   // Auto-login after registration
   const session = setSession(newUser);
+  const tokens = generateTokens(session);
 
   return {
     success: true,
-    user: session
+    user: session,
+    tokens
   };
 };
 
 // Logout
 export const logout = () => {
   localStorage.removeItem('vb_bank_session');
+  clearTokens();
   return {
     success: true,
     message: 'Logged out successfully'

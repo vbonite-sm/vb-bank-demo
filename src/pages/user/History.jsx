@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { FiFilter, FiDownload, FiTrendingUp, FiTrendingDown, FiDollarSign } from 'react-icons/fi';
 import { getCurrentSession } from '../../services/authService';
-import { getUserTransactions } from '../../services/bankService';
+import { apiGetTransactions } from '../../services/bankApi';
 import './History.css';
 
 const History = () => {
@@ -24,11 +24,13 @@ const History = () => {
     applyFilters();
   }, [filter, searchTerm, startDate, endDate, minAmount, maxAmount, transactions]);
 
-  const loadTransactions = () => {
+  const loadTransactions = async () => {
     if (session) {
-      const txns = getUserTransactions(session.userId);
-      setTransactions(txns);
-      setFilteredTransactions(txns);
+      const response = await apiGetTransactions(session.userId);
+      if (response.success) {
+        setTransactions(response.data);
+        setFilteredTransactions(response.data);
+      }
     }
   };
 

@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { getCurrentSession } from './services/authService';
 import { seedData } from './utils/seeder';
 
@@ -29,12 +29,27 @@ import AdminDashboard from './pages/admin/AdminDashboard';
 import UserManagement from './pages/admin/UserManagement';
 
 function App() {
+  const [session, setSession] = useState(() => getCurrentSession());
+
   useEffect(() => {
     // Seed data on first load
     seedData();
   }, []);
 
-  const session = getCurrentSession();
+  // Listen for session changes so logout propagates instantly
+  useEffect(() => {
+    const handleSessionChange = () => {
+      setSession(getCurrentSession());
+    };
+
+    window.addEventListener('storage', handleSessionChange);
+    window.addEventListener('session-change', handleSessionChange);
+
+    return () => {
+      window.removeEventListener('storage', handleSessionChange);
+      window.removeEventListener('session-change', handleSessionChange);
+    };
+  }, []);
 
   return (
     <Router>
