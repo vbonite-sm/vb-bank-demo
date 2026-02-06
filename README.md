@@ -28,6 +28,14 @@ A premium mock banking application built with React and Vite for automation test
 - **Test Card Support**: Pre-filled test card for easy testing
 - **Transaction Deduplication**: Guards against duplicate deposits
 
+### Mock REST API Layer
+- **Realistic API Simulation**: All operations wrapped in async REST-like API calls
+- **Service Worker Interception**: API calls visible in DevTools Network tab with proper methods, URLs, headers, and bodies
+- **JWT Token Authentication**: Access tokens (15 min) + refresh tokens (7 days) with auto-refresh
+- **Sensitive Data Masking**: Passwords, tokens, PINs, account numbers, and card numbers are masked in Network tab payloads
+- **OpenAPI/Swagger Documentation**: Full API spec at `/api-docs/` with interactive Swagger UI
+- **Configurable Behavior**: Adjustable latency, error rates, and logging
+
 ## Tech Stack
 
 - **React 18.3** - UI framework
@@ -96,7 +104,10 @@ Use these account numbers to test transfer functionality:
 ```
 vb-bank/
 ├── public/
-│   └── vb-logo.svg
+│   ├── mockServiceWorker.js          # Service Worker for Network tab visibility
+│   └── api-docs/
+│       ├── index.html                 # Swagger UI viewer
+│       └── openapi.json               # OpenAPI 3.0 specification
 ├── src/
 │   ├── components/
 │   │   ├── Layout.jsx / Layout.css
@@ -122,12 +133,17 @@ vb-bank/
 │   │       ├── Loan.jsx / Loan.css
 │   │       └── Settings.jsx / Settings.css
 │   ├── services/
-│   │   ├── authService.js
-│   │   ├── bankService.js
-│   │   ├── adminService.js
-│   │   ├── apiService.js
-│   │   ├── cryptoService.js
-│   │   └── paymentGatewayService.js
+│   │   ├── mockApi.js                 # Core mock API layer + SW bridge + data masking
+│   │   ├── authApi.js                 # Auth API endpoints (login, register, logout, refresh)
+│   │   ├── bankApi.js                 # Banking API endpoints (transfers, cards, loans, etc.)
+│   │   ├── adminApi.js                # Admin API endpoints (user management, stats)
+│   │   ├── tokenService.js            # JWT token generation, validation, and refresh
+│   │   ├── authService.js             # Authentication business logic
+│   │   ├── bankService.js             # Banking business logic
+│   │   ├── adminService.js            # Admin business logic
+│   │   ├── apiService.js              # External API calls (currency rates)
+│   │   ├── cryptoService.js           # Crypto price API service
+│   │   └── paymentGatewayService.js   # Mock payment gateway logic
 │   ├── styles/
 │   │   ├── variables.css
 │   │   └── global.css
@@ -136,6 +152,7 @@ vb-bank/
 │   ├── App.jsx
 │   └── main.jsx
 ├── index.html
+├── vercel.json
 ├── vite.config.js
 ├── package.json
 └── README.md
@@ -143,12 +160,15 @@ vb-bank/
 
 ## Key Features Explained
 
-### Authentication
+### Authentication & Security
 - Role-based authentication (User vs Admin)
+- JWT-like token system with access tokens (15 min) and refresh tokens (7 days)
+- Automatic silent token refresh on expiry
 - Session management using localStorage
-- Protected routes with automatic redirects
+- Protected routes with token validation and auto-refresh
 - Quick login buttons for testing
 - Smart greeting ("Welcome" for new users, "Welcome back" for returning users)
+- Sensitive data masking in Network tab (passwords, tokens, PINs, account/card numbers)
 
 ### Banking Operations
 - Transfer money between accounts
@@ -183,6 +203,20 @@ vb-bank/
 - Transaction deduplication to prevent double charges
 - Success/failure redirect handling
 
+### Mock API Layer
+- All operations go through async REST-like API calls (`mockApi.js`)
+- Service Worker intercepts `/api/*` requests so they appear in DevTools Network tab
+- Proper HTTP methods, status codes, headers, and JSON request/response bodies
+- Bearer token `Authorization` headers on authenticated requests
+- Configurable simulated latency (200–800ms) and error injection
+- Centralized sensitive data sanitizer masks passwords, JWT tokens, PINs, account numbers, and card numbers in Network payloads — app data stays intact
+
+### API Documentation
+- OpenAPI 3.0 specification with 32 endpoints and 11 schemas
+- Interactive Swagger UI at `/api-docs/`
+- Bearer auth security scheme documented
+- Try-it-out examples for all endpoints
+
 ### Data Persistence
 - All data stored in localStorage
 - Automatic data seeding on first load
@@ -198,6 +232,23 @@ The application uses localStorage to simulate a backend. Data is automatically s
 localStorage.clear();
 location.reload();
 ```
+
+### Token Service (Dev Console)
+The token service is exposed on `window.__tokenService` for debugging:
+
+```javascript
+// View current token info
+window.__tokenService.getTokenInfo();
+
+// Decode the access token payload
+window.__tokenService.decodeToken();
+
+// Manually refresh the access token
+window.__tokenService.refreshAccessToken();
+```
+
+### API Documentation
+Swagger UI is available at `/api-docs/` when the dev server is running. The raw OpenAPI spec is at `/api-docs/openapi.json`.
 
 ### APIs Used
 - **Currency Rates**: [ExchangeRate-API](https://open.er-api.com/) — free, no API key required
