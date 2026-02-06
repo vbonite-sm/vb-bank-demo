@@ -5,6 +5,19 @@ import { BuggyProvider } from './context/BuggyContext';
 import { initMockServiceWorker } from './services/mockApi';
 import './styles/global.css';
 
+// Expose API services on window for Playwright API testing
+import * as authApi from './services/authApi';
+import * as bankApi from './services/bankApi';
+import * as adminApi from './services/adminApi';
+
+window.__API__ = {
+  auth: authApi,
+  bank: bankApi,
+  admin: adminApi
+};
+
+console.log('[App] API layer exposed on window.__API__ for test automation');
+
 // Wait for Service Worker to be ready before rendering app
 // This ensures all API calls are visible in Network tab
 const root = ReactDOM.createRoot(document.getElementById('root'));
